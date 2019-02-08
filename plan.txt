@@ -1,0 +1,41 @@
+Steps
+
+Creation
+* Create window with a div in it (set width & height)
+* Enable controls
+* Make background black
+* set loadTimer for pictures & fade count
+
+currently uses bigList to switch through images
+
+idea
+* put videos file name inside of bigList
+* randomly choose something in big list
+* if filename ends with .mp4, then show video layer and hide img layer
+  * ignore loadTimer
+  * put video on video layer and play
+  * once it is done, hide the video layer
+* if file is an image, show image layer and hide video layer
+  * use loadTimer
+  * show for loadTimer amt of seconds
+  * once done, hide image layer
+* randomly choose something in the big list again
+
+problem:
+* images and videos are in different directories
+* can we just make the image path normal and video path ../videos
+
+adding to carousel
+* same eat function as image
+
+ movie_player for findAllApplicationsOfType
+
+ click on videos that dont play
+
+ onended event video
+
+ resize --> use this.sendResize!!!
+
+ Q: What does initApp do?
+
+ imageLoadCallback --> mediaLoadCallback
