@@ -9,33 +9,13 @@
 // Copyright (c) 2014
 
 ////////////////////////////////////////
-// simple photo slideshow
+// A video/photo slideshow
 // Written by Andy Johnson - 2014
+// and Angela Zheng - 2019
 ////////////////////////////////////////
 
-/*
-    SAGE2_photoAlbums = [];
-    SAGE2_photoAlbums[0] = {list:"https://lyra.evl.uic.edu:9000/evl_Pictures/photos.txt",
-            location:"https://lyra.evl.uic.edu:9000/evl_Pictures/"};
-    SAGE2_photoAlbums[1] = {list:"https://lyra.evl.uic.edu:9000/webcam2.txt",
-            location:"ftp://ftp.evl.uic.edu/pub/INcoming/spiff/"};
-    SAGE2_photoAlbums[2] = {list:"https://lyra.evl.uic.edu:9000/webcam3.txt",
-            location:"http://cdn.abclocal.go.com/three/wls/webcam/"};
-    SAGE2_photoAlbums[3] = {list:"https://lyra.evl.uic.edu:9000/posters/photos.txt",
-            location:"https://lyra.evl.uic.edu:9000/posters/"};
-
-    SAGE2_photoAlbums[4] = {list:"https://sage.evl.uic.edu/evl_Pictures/photos.txt",
-            location:"https://sage.evl.uic.edu/evl_Pictures/"};
-*/
-
-
-/* global d3,
-*/
-
-// var SAGE2_photoAlbumLoadTimer = 20;
-// var SAGE2_photoAlbumFadeCount = 20;
-// var SAGE2_photoAlbumCanvasBackground = "black";
-// var SAGE2_photoAlbums = [];
+let videoDiv;
+let imgDiv;
 
 var vidPicCarousel = SAGE2_App.extend({
 	construct: function() {
@@ -55,7 +35,6 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.loadTimer = 2; // default value to be replaced from photo_scrapbooks.js
 		this.fadeCount = 1; // default value to be replaced from photo_scrapbooks.js
 
-
 		this.URL1  = "";
 		this.URL1a = "";
 		this.URL1b = "";
@@ -71,7 +50,7 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.fileName = "";
 		this.listFileName = "";
 
-		this.appName = "evl_photos:";
+		this.appName = "vidPicCarousel:";
 
 		this.image1 = new Image();
 		this.image2 = new Image();
@@ -94,13 +73,15 @@ var vidPicCarousel = SAGE2_App.extend({
 	chooseImagery: function(selection) {
 		this.listFileNamePhotos = SAGE2_photoAlbums[selection].list;
 		this.listFileNameLibrary = SAGE2_photoAlbums[selection].location;
+
+		console.log("File location: " + this.listFileNameLibrary);
 	},
 
 	////////////////////////////////////////
 
 	initApp: function() {
 		this.listFileCallbackFunc        = this.listFileCallback.bind(this);
-		this.imageLoadCallbackFunc       = this.imageLoadCallback.bind(this);
+		this.imageLoadCallbackFunc       = this.imageLoadCallback.bind(this); // 2nd func switches the picture shown
 		this.imageLoadFailedCallbackFunc = this.imageLoadFailedCallback.bind(this);
 
 		this.image1.onload  = this.imageLoadCallbackFunc;
@@ -154,7 +135,7 @@ var vidPicCarousel = SAGE2_App.extend({
 			return;
 		}
 
-		this.bigList = d3.csvParse(localData);
+		this.bigList = d3.csvParse(localData); // ???
 		console.log(this.appName + "loaded in list of " + this.bigList.length + " images");
 
 		this.update();
@@ -277,10 +258,19 @@ var vidPicCarousel = SAGE2_App.extend({
 	// if all the random numbers are in sync this will work - but not completely safe
 
 	newImage: function() {
+
+console.log("bigList length: " + this.bigList.length);
+console.log("BIGLIST INCOMING\n");
+console.log(this.bigList[0]);
+
 		if (this.bigList === null) {
 			this.state.counter = 0;
 		} else {
-			this.state.counter = Math.floor(Math.random() * this.bigList.length);
+			let number = Math.floor(Math.random() * this.bigList.length);
+			if (typeof this.bigList[number] != "undefined" && this.bigList[number].name.includes(".mp4")) { // Why does this keep returning undefined
+				console.log("Video switch");
+			}
+			this.state.counter = number;
 		}
 	},
 
@@ -341,9 +331,13 @@ var vidPicCarousel = SAGE2_App.extend({
 
 			// ideally this random number should come from the master to guarantee identical values across clients
 
-			this.fileName = this.listFileNameLibrary + escape(this.bigList[this.state.counter].name) +
-				'?' + Math.floor(Math.random() * 10000000);
-				// console.log(this.bigList);
+			// this.fileName = this.listFileNameLibrary + escape(this.bigList[this.state.counter].name) +
+				// '?' + Math.floor(Math.random() * 10000000);
+				// test TEST
+
+				this.fileName = this.listFileNameLibrary + escape(this.bigList[this.state.counter].name);
+
+				console.log(this.bigList);
 			this.broadcast("updateNode", {data: this.fileName});
 		}
 	},
@@ -369,7 +363,7 @@ var vidPicCarousel = SAGE2_App.extend({
 		// console.log(this.image1);
 		// console.log(this.image2);
 		// console.log(this.image3);
-		// console.log("updated");
+		console.log("updated");
 	},
 
 	////////////////////////////////////////
@@ -408,10 +402,6 @@ var vidPicCarousel = SAGE2_App.extend({
 
 		this.loadTimer = 15; // default value to be replaced from photo_scrapbooks.js
 		this.fadeCount = 10.0; // default value to be replaced from photo_scrapbooks.js
-
-		if (this.fadeCount == 0) {
-			this.fadeCount = 1; // avoid divide by zero later on
-		}
 
 		this.URL1  = "";
 		this.URL1a = "";
@@ -518,6 +508,18 @@ var vidPicCarousel = SAGE2_App.extend({
 
 		this.update();
 		this.draw_d3(data.date);
+
+		let imgDiv = document.createElement("IMG");
+    imgDiv.setAttribute("src", "https://www.catster.com/wp-content/uploads/2018/01/Ragdoll-3.jpg");
+		this.element.parentNode.insertBefore(imgDiv, this.element);
+		// document.body.insertBefore(imgDiv, document.body.firstChild);
+		console.log("src for imgDiv: " + imgDiv.src);
+
+		videoDiv = document.createElement("VIDEO");
+		videoDiv.style.display = "none";
+		//document.body.insertBefore(videoDiv, document.body.firstChild);
+		tempVideoDiv = document.createElement("VIDEO");
+
 	},
 
 	load: function(date) {
@@ -560,13 +562,6 @@ var vidPicCarousel = SAGE2_App.extend({
 		}
 	},
 
-
-
-
-
-
-
-
 	performEat: function() {
 	  let imageApps = this.findAllApplicationsOfType("image_viewer");
 	  let imageUrl;
@@ -580,8 +575,8 @@ var vidPicCarousel = SAGE2_App.extend({
 	          while(imageUrl.includes("\\")) {
 	              imageUrl = imageUrl.substring(imageUrl.indexOf("/") + 1);
 						}
-	          if (!this.isAlreadyInBigList(imageUrl)) {
-	            this.bigList.push({name: imageUrl});
+	          if (!this.isAlreadyInBigList(("images/" + imageUrl))) {
+	            this.bigList.push({name: ("images/" + imageUrl) });
 	          }
 	          imageApps[i].close();
 	      }
@@ -593,7 +588,7 @@ var vidPicCarousel = SAGE2_App.extend({
 			if (this.isParamAppOverThisApp(videoApps[j])) {
         console.log("VIDEO: " + videoApps);
         // error; loops forever and doesn't recognize movie_player as an
-        // app type 
+        // app type
 					videoUrl = this.getUrlOfApp(videoApps[j]);
 
 					while(videoUrl.includes("/")) {
@@ -602,8 +597,8 @@ var vidPicCarousel = SAGE2_App.extend({
 					while(videoUrl.includes("\\")) {
 							videoUrl = videoUrl.substring(videoUrl.indexOf("/") + 1);
 					}
-					if (!this.isAlreadyInBigList(videoUrl)) {
-						this.bigList.push({name: videoUrl});
+					if (!this.isAlreadyInBigList(("videos/" + videoUrl))) {
+						this.bigList.push({name: ("videos/" + videoUrl) });
 					}
 
 					console.log("video before close");
@@ -642,7 +637,7 @@ var vidPicCarousel = SAGE2_App.extend({
     	}
     	// Return array of all matches
       if (appsOfType.length > 0) {
-        console.log(appsOfType);
+        // console.log(appsOfType);
       }
     	return appsOfType;
     },
@@ -679,20 +674,10 @@ var vidPicCarousel = SAGE2_App.extend({
     	// The different app types have different storage of url
     	if (app.application === "image_viewer") {
     		return app.state.img_url;
-    	} else if (app.application === "video_url") {
+    	} else if (app.application === "movie_player") {
     		return app.state.video_url;
     	} else {
     		throw "App type " + app.application + " unsuported. Unable to determine URL.";
     	}
-    },
-
-
-
-
-
-
-
-
-
-
+    }
 });
