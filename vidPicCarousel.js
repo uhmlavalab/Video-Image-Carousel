@@ -510,15 +510,18 @@ console.log(this.bigList[0]);
 		this.draw_d3(data.date);
 
 		let imgDiv = document.createElement("IMG");
+		imgDiv.style.display = "block";
     imgDiv.setAttribute("src", "https://www.catster.com/wp-content/uploads/2018/01/Ragdoll-3.jpg");
 		this.element.parentNode.insertBefore(imgDiv, this.element);
-		// document.body.insertBefore(imgDiv, document.body.firstChild);
 		console.log("src for imgDiv: " + imgDiv.src);
 
 		videoDiv = document.createElement("VIDEO");
-		videoDiv.style.display = "none";
-		//document.body.insertBefore(videoDiv, document.body.firstChild);
+		videoDiv.style.display = "block";
+		this.element.parentNode.insertBefore(videoDiv, this.element);
 		tempVideoDiv = document.createElement("VIDEO");
+
+		actualVideo = document.createElement("SOURCE");
+		videoDiv.parentNode.insertBefore(actualVideo, videoDiv.nextSibling); // vidoeDiv is null?
 
 	},
 
