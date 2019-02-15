@@ -521,7 +521,10 @@ console.log(this.bigList[0]);
 		tempVideoDiv = document.createElement("VIDEO");
 
 		actualVideo = document.createElement("SOURCE");
-		videoDiv.parentNode.insertBefore(actualVideo, videoDiv.nextSibling); // vidoeDiv is null?
+		videoDiv.setAttribute("type", "video/mp4");
+		// Works! Shows test video
+		// videoDiv.setAttribute("src", "user/videos/test.mp4");
+		videoDiv.parentNode.insertBefore(actualVideo, videoDiv.nextSibling);
 
 	},
 
