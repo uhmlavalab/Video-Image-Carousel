@@ -16,6 +16,7 @@
 
 let videoDiv;
 let imgDiv;
+let actualVideo;
 
 var vidPicCarousel = SAGE2_App.extend({
 	construct: function() {
@@ -259,9 +260,9 @@ var vidPicCarousel = SAGE2_App.extend({
 
 	newImage: function() {
 
-console.log("bigList length: " + this.bigList.length);
-console.log("BIGLIST INCOMING\n");
-console.log(this.bigList[0]);
+		console.log("bigList length: " + this.bigList.length);
+		console.log("BIGLIST INCOMING\n");
+		console.log(this.bigList[0]);
 
 		if (this.bigList === null) {
 			this.state.counter = 0;
@@ -509,23 +510,24 @@ console.log(this.bigList[0]);
 		this.update();
 		this.draw_d3(data.date);
 
-		let imgDiv = document.createElement("IMG");
+		imgDiv = document.createElement("IMG");
 		imgDiv.style.display = "block";
     imgDiv.setAttribute("src", "https://www.catster.com/wp-content/uploads/2018/01/Ragdoll-3.jpg");
+
 		this.element.parentNode.insertBefore(imgDiv, this.element);
 		console.log("src for imgDiv: " + imgDiv.src);
 
 		videoDiv = document.createElement("VIDEO");
+		videoDiv.setAttribute("width", 800);
+		videoDiv.setAttribute("height", 600);
 		videoDiv.style.display = "block";
 		this.element.parentNode.insertBefore(videoDiv, this.element);
 		tempVideoDiv = document.createElement("VIDEO");
 
 		actualVideo = document.createElement("SOURCE");
 		videoDiv.setAttribute("type", "video/mp4");
-		// Works! Shows test video
-		// videoDiv.setAttribute("src", "user/videos/test.mp4");
+		videoDiv.setAttribute("src", "user/videos/test.mp4");
 		videoDiv.parentNode.insertBefore(actualVideo, videoDiv.nextSibling);
-
 	},
 
 	load: function(date) {
