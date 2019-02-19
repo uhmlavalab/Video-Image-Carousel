@@ -166,17 +166,17 @@ var vidPicCarousel = SAGE2_App.extend({
 			var image2DrawWidth = this.canvasWidth;
 			var image2DrawHeight = this.canvasHeight;
 
-			if (this.image2 != "NULL") {
-				// console.log("original image is " + this.image2.width + "," + this.image2.height);
-				var image2x = this.image2.width;
-				var image2y = this.image2.height;
-				var image2ratio = image2x / image2y;
-
-				// want wide images to be aligned to top not center
-				if (image2ratio > windowRatio) {
-					image2DrawWidth  =  this.canvasWidth;
-					image2DrawHeight = this.canvasWidth / image2ratio;
-				}
+			// if (this.image2 != "NULL") {
+			// 	// console.log("original image is " + this.image2.width + "," + this.image2.height);
+			// 	var image2x = this.image2.width;
+			// 	var image2y = this.image2.height;
+			// 	var image2ratio = image2x / image2y;
+			//
+			// 	// want wide images to be aligned to top not center
+			// 	if (image2ratio > windowRatio) {
+			// 		image2DrawWidth  =  this.canvasWidth;
+			// 		image2DrawHeight = this.canvasWidth / image2ratio;
+			// 	}
 
 				// if (this.okToDraw > 1)
 				// 	this.svg.select("#image2")
@@ -190,20 +190,23 @@ var vidPicCarousel = SAGE2_App.extend({
 				// 	.attr("width",  image2DrawWidth)
 				// 	.attr("height", image2DrawHeight);
 				// }
-				if (this.okToDraw > 1) {
-					this.svg.select("#image2")
-						.attr("xlink:href", this.image2.src)
-						.attr("opacity", 1)
-						.attr("width", image2DrawWidth)
-						.attr("height", image2DrawHeight);
-				} else {
-					this.svg.select("#image2")
-						.attr("xlink:href", this.image2.src)
-						.attr("opacity", Math.max(0.0, Math.min(1.0, (this.okToDraw + 9) / this.fadeCount)))
-						.attr("width",  image2DrawWidth)
-						.attr("height", image2DrawHeight);
-				}
-			}
+
+				// ???
+			// 	if (this.okToDraw > 1) {
+			// 		this.svg.select("#image2")
+			// 			.attr("xlink:href", this.image2.src)
+			// 			.attr("opacity", 1)
+			// 			.attr("width", image2DrawWidth)
+			// 			.attr("height", image2DrawHeight);
+			// 	} else {
+			// 		this.svg.select("#image2")
+			// 			.attr("xlink:href", this.image2.src)
+			// 			.attr("opacity", Math.max(0.0, Math.min(1.0, (this.okToDraw + 9) / this.fadeCount)))
+			// 			.attr("width",  image2DrawWidth)
+			// 			.attr("height", image2DrawHeight);
+			// 	}
+			// }
+			// ???
 
 			if (this.image1 != "NULL") {
 				// current image
@@ -279,7 +282,7 @@ var vidPicCarousel = SAGE2_App.extend({
 			this.state.counter = 0;
 		} else {
 			let number = Math.floor(Math.random() * this.bigList.length);
-			if (typeof this.bigList[number] != "undefined" && this.bigList[number].name.includes(".mp4")) { // Why does this keep returning undefined
+			if (typeof this.bigList[number] != "undefined" && this.bigList[number].name.includes(".mp4")) {
 				console.log("Video switch");
 				this.imgDiv.style.display = "none";
 				this.videoDiv.style.display = "block";
@@ -535,15 +538,22 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.imgDiv = document.createElement("IMG");
 		this.imgDiv.style.display = "block";
     this.imgDiv.setAttribute("src", "https://www.catster.com/wp-content/uploads/2018/01/Ragdoll-3.jpg");
-		this.imgDiv.setAttribute("width", 800);
-		this.imgDiv.setAttribute("height", 600);
+		this.imgDiv.style.maxWidth = "800px";
+		this.imgDiv.style.maxHeight = "600px";
+
+		this.imgDiv.style.margin = "0 auto";
 
 		this.element.parentNode.insertBefore(this.imgDiv, this.element);
 		console.log("src for imgDiv: " + this.imgDiv.src);
-
+		this.element.style.background = "black";
+/// huh ???
 		this.videoDiv = document.createElement("VIDEO");
-		this.videoDiv.setAttribute("width", 800);
-		this.videoDiv.setAttribute("height", 600);
+
+		this.videoDiv.style.maxWidth = "800px";
+		this.videoDiv.style.maxHeight = "600px";
+
+		// this.videoDiv.setAttribute("width", 800);
+		// this.videoDiv.setAttribute("height", 600);
 		this.videoDiv.style.display = "none"; // "block" to show
 		this.element.parentNode.insertBefore(this.videoDiv, this.element);
 		this.tempVideoDiv = document.createElement("VIDEO");
@@ -551,6 +561,9 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.actualVideo = document.createElement("SOURCE");
 		this.videoDiv.setAttribute("type", "video/mp4");
 		this.videoDiv.setAttribute("src", "user/videos/test.mp4");
+
+		this.videoDiv.style.margin = "0 auto";
+		this.actualVideo.style.margin = "0 auto";
 
 		this.videoDiv.parentNode.insertBefore(this.actualVideo, this.videoDiv.nextSibling);
 	},

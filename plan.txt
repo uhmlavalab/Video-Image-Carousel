@@ -2,6 +2,7 @@ CURRENT PROGRESS
 * Fix timer when switching to videos
 * Hide the old image slideshow
 * Put in fading to new img?
+* Center images
 
 
 
