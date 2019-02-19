@@ -1,10 +1,9 @@
 CURRENT PROGRESS
-* Displays images
-* Displays dynamically added images
-* Eats videos and adds the correct path to the bigList
+* Fix timer when switching to videos
+* Hide the old image slideshow
+* Put in fading to new img?
 
-TODO
-* Display video
+
 
 :::global variables:::
 imgDiv
@@ -17,6 +16,8 @@ tempVideoDiv
 Q: Whats the difference between init and construct
 
 Steps
+
+line 102
 
 Creation
 * Create window with a div in it (set width & height)

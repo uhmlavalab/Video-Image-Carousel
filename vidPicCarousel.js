@@ -34,7 +34,7 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.canvasHeight = 600;
 
 		this.loadTimer = 2; // default value to be replaced from photo_scrapbooks.js
-		this.fadeCount = 1; // default value to be replaced from photo_scrapbooks.js
+		this.fadeCount = 1.0; // default value to be replaced from photo_scrapbooks.js
 
 		this.URL1  = "";
 		this.URL1a = "";
@@ -106,6 +106,8 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.okToDraw = this.fadeCount;
 		this.image1 = this.image3; // image1 is now the new image
 		this.image3 = this.imageTemp;
+
+		this.imgDiv.src = this.image1.src;
 		// console.log(this.appName + "imageLoadCallback");
 	},
 
@@ -136,7 +138,7 @@ var vidPicCarousel = SAGE2_App.extend({
 			return;
 		}
 
-		this.bigList = d3.csvParse(localData); // ???
+		this.bigList = d3.csvParse(localData);
 		console.log(this.appName + "loaded in list of " + this.bigList.length + " images");
 
 		this.update();
@@ -215,12 +217,21 @@ var vidPicCarousel = SAGE2_App.extend({
 					image1DrawHeight = this.canvasWidth / image1ratio;
 				}
 
-				this.svg.select("#image1")
+				// this.svg.select("#image1")
+				// 	.attr("xlink:href", this.image1.src)
+				// 	.attr("opacity", Math.max(0.0, Math.min(1.0, 1.0 - (this.okToDraw / this.fadeCount))))
+				// 	.attr("width",  image1DrawWidth)
+				// 	.attr("height", image1DrawHeight);
+
+
+				this.svg.select("#imgDiv")
 					.attr("xlink:href", this.image1.src)
 					.attr("opacity", Math.max(0.0, Math.min(1.0, 1.0 - (this.okToDraw / this.fadeCount))))
 					.attr("width",  image1DrawWidth)
 					.attr("height", image1DrawHeight);
+
 			}
+
 
 			this.okToDraw -= 1.0;
 		}
@@ -270,6 +281,17 @@ var vidPicCarousel = SAGE2_App.extend({
 			let number = Math.floor(Math.random() * this.bigList.length);
 			if (typeof this.bigList[number] != "undefined" && this.bigList[number].name.includes(".mp4")) { // Why does this keep returning undefined
 				console.log("Video switch");
+				this.imgDiv.style.display = "none";
+				this.videoDiv.style.display = "block";
+
+				// Switch to new video
+				this.actualVideo.src = this.bigList[number];
+			}
+			else {
+				// Is an image
+				this.imgDiv.style.display = "block";
+				this.videoDiv.style.display = "none";
+				console.log("image");
 			}
 			this.state.counter = number;
 		}
@@ -401,8 +423,8 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.canvasWidth  = 800;
 		this.canvasHeight = 600;
 
-		this.loadTimer = 15; // default value to be replaced from photo_scrapbooks.js
-		this.fadeCount = 10.0; // default value to be replaced from photo_scrapbooks.js
+		this.loadTimer = 2; // default value to be replaced from photo_scrapbooks.js
+		this.fadeCount = 1.0; // default value to be replaced from photo_scrapbooks.js
 
 		this.URL1  = "";
 		this.URL1a = "";
@@ -510,24 +532,27 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.update();
 		this.draw_d3(data.date);
 
-		imgDiv = document.createElement("IMG");
-		imgDiv.style.display = "block";
-    imgDiv.setAttribute("src", "https://www.catster.com/wp-content/uploads/2018/01/Ragdoll-3.jpg");
+		this.imgDiv = document.createElement("IMG");
+		this.imgDiv.style.display = "block";
+    this.imgDiv.setAttribute("src", "https://www.catster.com/wp-content/uploads/2018/01/Ragdoll-3.jpg");
+		this.imgDiv.setAttribute("width", 800);
+		this.imgDiv.setAttribute("height", 600);
 
-		this.element.parentNode.insertBefore(imgDiv, this.element);
-		console.log("src for imgDiv: " + imgDiv.src);
+		this.element.parentNode.insertBefore(this.imgDiv, this.element);
+		console.log("src for imgDiv: " + this.imgDiv.src);
 
-		videoDiv = document.createElement("VIDEO");
-		videoDiv.setAttribute("width", 800);
-		videoDiv.setAttribute("height", 600);
-		videoDiv.style.display = "block";
-		this.element.parentNode.insertBefore(videoDiv, this.element);
-		tempVideoDiv = document.createElement("VIDEO");
+		this.videoDiv = document.createElement("VIDEO");
+		this.videoDiv.setAttribute("width", 800);
+		this.videoDiv.setAttribute("height", 600);
+		this.videoDiv.style.display = "none"; // "block" to show
+		this.element.parentNode.insertBefore(this.videoDiv, this.element);
+		this.tempVideoDiv = document.createElement("VIDEO");
 
-		actualVideo = document.createElement("SOURCE");
-		videoDiv.setAttribute("type", "video/mp4");
-		videoDiv.setAttribute("src", "user/videos/test.mp4");
-		videoDiv.parentNode.insertBefore(actualVideo, videoDiv.nextSibling);
+		this.actualVideo = document.createElement("SOURCE");
+		this.videoDiv.setAttribute("type", "video/mp4");
+		this.videoDiv.setAttribute("src", "user/videos/test.mp4");
+
+		this.videoDiv.parentNode.insertBefore(this.actualVideo, this.videoDiv.nextSibling);
 	},
 
 	load: function(date) {
