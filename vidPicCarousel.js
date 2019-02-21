@@ -74,9 +74,9 @@ var vidPicCarousel = SAGE2_App.extend({
 	chooseImagery: function(selection) {
 		this.listFileNamePhotos = SAGE2_photoAlbums[selection].list;
 		this.listFileNameLibrary = SAGE2_photoAlbums[selection].location;
-
 		console.log("File location: " + this.listFileNameLibrary);
 	},
+
 
 	////////////////////////////////////////
 
@@ -288,7 +288,23 @@ var vidPicCarousel = SAGE2_App.extend({
 				this.videoDiv.style.display = "block";
 
 				// Switch to new video
-				this.actualVideo.src = this.bigList[number];
+				// this.actualVideo.src = this.bigList[number];
+				console.log("NAME: " + this.bigList[number].name);
+				console.log("NUMBER: " + this.bigList[number]);
+				this.videoDiv.setAttribute("src", "/user/" + this.bigList[number].name);
+				console.log("VIDEO SRC: " + this.videoDiv.src);
+				// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
+				this.videoDiv.autoplay = true;
+
+				this.videoDiv.onplaying = function() {
+					console.log("VIDEO IS PLAYING!");
+			  }
+
+				this.videoDiv.video.addEventListener("ended", function () {
+					 console.log("It's over!");
+				 });
+
+				// this.videoDiv.src = this.bigList[number];
 			}
 			else {
 				// Is an image
@@ -299,6 +315,7 @@ var vidPicCarousel = SAGE2_App.extend({
 			this.state.counter = number;
 		}
 	},
+
 
 	// move to the next photo album
 	nextAlbum: function() {
@@ -560,12 +577,15 @@ var vidPicCarousel = SAGE2_App.extend({
 
 		this.actualVideo = document.createElement("SOURCE");
 		this.videoDiv.setAttribute("type", "video/mp4");
-		this.videoDiv.setAttribute("src", "user/videos/test.mp4");
+		// this.videoDiv.setAttribute("src", "user/videos/test.mp4");
+		this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 
 		this.videoDiv.style.margin = "0 auto";
 		this.actualVideo.style.margin = "0 auto";
 
 		this.videoDiv.parentNode.insertBefore(this.actualVideo, this.videoDiv.nextSibling);
+
+		this.element.style.display = "none";
 	},
 
 	load: function(date) {
