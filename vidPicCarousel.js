@@ -296,13 +296,15 @@ var vidPicCarousel = SAGE2_App.extend({
 				// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 				this.videoDiv.autoplay = true;
 
-				this.videoDiv.onplaying = function() {
+				this.videoDiv.video.onplaying = function() {
 					console.log("VIDEO IS PLAYING!");
+
+					this.videoDiv.video.addEventListener('ended', function(){
+							console.log("VIDEO IS FINISHED!");
+					}, false);
+
 			  }
 
-				this.videoDiv.video.addEventListener("ended", function () {
-					 console.log("It's over!");
-				 });
 
 				// this.videoDiv.src = this.bigList[number];
 			}
@@ -563,7 +565,7 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.element.parentNode.insertBefore(this.imgDiv, this.element);
 		console.log("src for imgDiv: " + this.imgDiv.src);
 		this.element.style.background = "black";
-/// huh ???
+
 		this.videoDiv = document.createElement("VIDEO");
 
 		this.videoDiv.style.maxWidth = "800px";
