@@ -16,7 +16,6 @@
 
 let videoDiv;
 let imgDiv;
-let actualVideo;
 let switchMedia = true;
 
 var vidPicCarousel = SAGE2_App.extend({
@@ -108,10 +107,11 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.image1 = this.image3; // image1 is now the new image
 		this.image3 = this.imageTemp;
 
+		// Prevents switching until video is done playing if current element being
+		// displayed is a video
 		if (switchMedia) {
 			console.log("Switching image");
 			this.imgDiv.src = this.image1.src;
-		// console.log(this.appName + "imageLoadCallback");
 		}
 	},
 
@@ -128,7 +128,6 @@ var vidPicCarousel = SAGE2_App.extend({
 	},
 
 	listFileCallbackNode: function(data) {
-
 		var error = data.error;
 		var localData = data.data;
 
@@ -170,48 +169,6 @@ var vidPicCarousel = SAGE2_App.extend({
 			var image2DrawWidth = this.canvasWidth;
 			var image2DrawHeight = this.canvasHeight;
 
-			// if (this.image2 != "NULL") {
-			// 	// console.log("original image is " + this.image2.width + "," + this.image2.height);
-			// 	var image2x = this.image2.width;
-			// 	var image2y = this.image2.height;
-			// 	var image2ratio = image2x / image2y;
-			//
-			// 	// want wide images to be aligned to top not center
-			// 	if (image2ratio > windowRatio) {
-			// 		image2DrawWidth  =  this.canvasWidth;
-			// 		image2DrawHeight = this.canvasWidth / image2ratio;
-			// 	}
-
-				// if (this.okToDraw > 1)
-				// 	this.svg.select("#image2")
-				// 	.attr("xlink:href", this.image2.src)
-				// 	.attr("width",  image2DrawWidth)
-				// 	.attr("height", image2DrawHeight);
-				// else
-				// 	this.svg.select("#image2")
-				// 	.attr("xlink:href", this.image2.src)
-				// 	.attr("opacity", (this.okToDraw+9) * 0.1)
-				// 	.attr("width",  image2DrawWidth)
-				// 	.attr("height", image2DrawHeight);
-				// }
-
-				// ???
-			// 	if (this.okToDraw > 1) {
-			// 		this.svg.select("#image2")
-			// 			.attr("xlink:href", this.image2.src)
-			// 			.attr("opacity", 1)
-			// 			.attr("width", image2DrawWidth)
-			// 			.attr("height", image2DrawHeight);
-			// 	} else {
-			// 		this.svg.select("#image2")
-			// 			.attr("xlink:href", this.image2.src)
-			// 			.attr("opacity", Math.max(0.0, Math.min(1.0, (this.okToDraw + 9) / this.fadeCount)))
-			// 			.attr("width",  image2DrawWidth)
-			// 			.attr("height", image2DrawHeight);
-			// 	}
-			// }
-			// ???
-
 			if (this.image1 != "NULL") {
 				// current image
 				var image1x     = this.image1.width;
@@ -224,42 +181,25 @@ var vidPicCarousel = SAGE2_App.extend({
 					image1DrawHeight = this.canvasWidth / image1ratio;
 				}
 
-				// this.svg.select("#image1")
-				// 	.attr("xlink:href", this.image1.src)
-				// 	.attr("opacity", Math.max(0.0, Math.min(1.0, 1.0 - (this.okToDraw / this.fadeCount))))
-				// 	.attr("width",  image1DrawWidth)
-				// 	.attr("height", image1DrawHeight);
-
-
 				this.svg.select("#imgDiv")
 					.attr("xlink:href", this.image1.src)
 					.attr("opacity", Math.max(0.0, Math.min(1.0, 1.0 - (this.okToDraw / this.fadeCount))))
 					.attr("width",  image1DrawWidth)
 					.attr("height", image1DrawHeight);
-
 			}
-
-
 			this.okToDraw -= 1.0;
 		}
 
-
 		// if enough time has passed grab a new image and display it
-
 		if (isMaster) {
 			this.updateCounter += 1;
 
 			if ( (this.updateCounter > (this.loadTimer * this.maxFPS)) && switchMedia) {
-
 				this.update();
 			}
 
-
 			this.performEat();
 		}
-
-
-
 	},
 
 	////////////////////////////////////////
@@ -290,7 +230,6 @@ var vidPicCarousel = SAGE2_App.extend({
 				this.videoDiv.style.display = "block";
 
 				// Switch to new video
-				// this.actualVideo.src = this.bigList[number];
 				this.videoDiv.setAttribute("src", "/user/" + this.bigList[number].name);
 				// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 				this.videoDiv.autoplay = true;
@@ -303,17 +242,6 @@ var vidPicCarousel = SAGE2_App.extend({
 						console.log("VIDEO IS FINISHED!");
 						switchMedia = true;
 				}, false);
-
-
-				// console.log('before');
-				// this.videoDiv.style.zIndex = "100";
-				// this.imgDiv.style.display = "none";
-				// setTimeout(function(){
-				//     console.log('after');
-				// },1000*this.videoDiv.duration);
-
-
-				// this.videoDiv.src = this.bigList[number];
 			}
 			else {
 				// Is an image
@@ -336,6 +264,7 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.chooseImagery(this.state.imageSet);
 		this.loadInList();
 	},
+
 
 	// choose a particular photo album
 	setAlbum: function (albumNumber) {
@@ -369,6 +298,7 @@ var vidPicCarousel = SAGE2_App.extend({
 			if (switchMedia) {
 				this.newImage();
 			}
+
 			// if there is no image name for that nth image then get out
 			if (this.bigList[this.state.counter] === null) {
 				console.log(this.appName + "cant find filename of image number " + this.state.counter);
@@ -383,10 +313,6 @@ var vidPicCarousel = SAGE2_App.extend({
 
 			// ideally this random number should come from the master to guarantee identical values across clients
 
-			// this.fileName = this.listFileNameLibrary + escape(this.bigList[this.state.counter].name) +
-				// '?' + Math.floor(Math.random() * 10000000);
-				// test TEST
-
 				this.fileName = this.listFileNameLibrary + escape(this.bigList[this.state.counter].name);
 
 				console.log(this.bigList);
@@ -395,26 +321,13 @@ var vidPicCarousel = SAGE2_App.extend({
 	},
 
 	updateNode: function(data) {
-
 		this.fileName = data.data;
 
 		if (this.fileName === null) {
 			console.log(this.appName + "no filename of new photo to load");
 			return;
 		}
-		// console.log(this.appName + this.fileName);
-
-		// ask for image3 to load in the new image
-
-		///
-		// this.imageTemp = this.image2; // hold onto 2
-		// this.image2 = this.image1; // image2 is the previous image (needed for fading)
-
-		//this.image3 = new Image(); // image3 is the new image to be loaded
 		this.image3.src = this.fileName;
-		// console.log(this.image1);
-		// console.log(this.image2);
-		// console.log(this.image3);
 	},
 
 	////////////////////////////////////////
@@ -492,9 +405,6 @@ var vidPicCarousel = SAGE2_App.extend({
 			.attr("viewBox", box)
 			.attr("preserveAspectRatio", "xMinYMin meet"); // new
 
-		// console.log(this.imageLoadCallbackFunc);
-		// console.log(this.imageLoadFailedCallbackFunc);
-
 		this.svg.append("svg:rect")
 				.style("stroke", this.canvasBackground)
 				.style("fill", this.canvasBackground)
@@ -518,22 +428,10 @@ var vidPicCarousel = SAGE2_App.extend({
 				.attr("id", "image1") //image2
 				.attr("width",  data.width)
 				.attr("height", data.height);
-		//this.svg.append("svg:image")
-		//	.attr("opacity", 1)
-		//	.attr("x",  0)
-		//	.attr("y",  0)
-		//	.attr("id", "image3")
-		//	.attr("width",  data.width)
-		//	.attr("height", data.height);
 
 		// create the widgets
 		console.log("creating controls");
 		this.controls.addButton({type: "next", sequenceNo: 3, id: "Next"});
-
-		// action:function(date){
-		// 	// This is executed after the button click animation occurs.
-		// 	this.nextAlbum();
-		// }.bind(this)});
 
 		var _this = this;
 
@@ -546,10 +444,7 @@ var vidPicCarousel = SAGE2_App.extend({
 					fill: "rgba(250,250,250,1.0)",
 					animation: false
 				};
-
-				_this.controls.addButton({type: albumButton, sequenceNo: 5 + loopIdx, id: loopIdxWithPrefix});/* action:function(date){
-				this.setAlbum(loopIdxWithPrefix);
-				}.bind(_this) });*/
+				_this.controls.addButton({type: albumButton, sequenceNo: 5 + loopIdx, id: loopIdxWithPrefix});
 			}(loopIdxWithPrefix));
 		}
 
@@ -562,14 +457,13 @@ var vidPicCarousel = SAGE2_App.extend({
 
 		this.imgDiv = document.createElement("IMG");
 		this.imgDiv.style.display = "block";
-    this.imgDiv.setAttribute("src", "https://www.catster.com/wp-content/uploads/2018/01/Ragdoll-3.jpg");
+    this.imgDiv.setAttribute("src", "https://localhost:9090/uploads/images/sage2-1400-green_tm.png");
 		this.imgDiv.style.maxWidth = "800px";
 		this.imgDiv.style.maxHeight = "600px";
-
 		this.imgDiv.style.margin = "0 auto";
+		this.imgDiv.style.textAlign = "center";
 
 		this.element.parentNode.insertBefore(this.imgDiv, this.element);
-		console.log("src for imgDiv: " + this.imgDiv.src);
 		this.element.style.background = "black";
 
 		this.videoDiv = document.createElement("VIDEO");
@@ -583,21 +477,16 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.element.parentNode.insertBefore(this.videoDiv, this.element);
 		this.tempVideoDiv = document.createElement("VIDEO");
 
-		this.actualVideo = document.createElement("SOURCE");
 		this.videoDiv.setAttribute("type", "video/mp4");
-		// this.videoDiv.setAttribute("src", "user/videos/test.mp4");
 		this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 
 		this.videoDiv.style.margin = "0 auto";
-		this.actualVideo.style.margin = "0 auto";
 
-		this.videoDiv.parentNode.insertBefore(this.actualVideo, this.videoDiv.nextSibling);
 
 		this.element.style.display = "none";
 	},
 
 	load: function(date) {
-		// pass
 	},
 
 	draw_d3: function(date) {
@@ -609,7 +498,7 @@ var vidPicCarousel = SAGE2_App.extend({
 	},
 
 	resize: function(date) {
-		this.svg.attr('width',  this.element.clientWidth  + "px");
+		this.svg.attr('width', this.element.clientWidth  + "px");
 		this.svg.attr('height', this.element.clientHeight + "px");
 
 		this.updateWindow();
@@ -618,10 +507,8 @@ var vidPicCarousel = SAGE2_App.extend({
 
 	event: function(eventType, pos, user, data, date) {
 		if (eventType === "pointerPress" && (data.button === "left")) {
-			// pass
 		}
 		if (eventType === "pointerMove") {
-			// pass
 		}
 		if (eventType === "pointerRelease" && (data.button === "left")) {
 			this.nextAlbum();
@@ -655,12 +542,9 @@ var vidPicCarousel = SAGE2_App.extend({
 	      }
 	  }
 		let videoApps = this.findAllApplicationsOfType("movie_player")
-    // console.log("inside video portion");
 		let videoUrl;
 		for (let j = 0; j < videoApps.length; j++) {
 			if (this.isParamAppOverThisApp(videoApps[j])) {
-        // error; loops forever and doesn't recognize movie_player as an
-        // app type
 					videoUrl = this.getUrlOfApp(videoApps[j]);
 
 					while(videoUrl.includes("/")) {
@@ -690,64 +574,55 @@ var vidPicCarousel = SAGE2_App.extend({
 	},
 
 
-
-
-    findAllApplicationsOfType: function(type) {
-    	let appsOfType = [];
-    	// Applications is an object with id entries
-    	let appIds = Object.keys(applications);
-    	let app;
-    	// Go through each entry
-    	for (let i = 0; i < appIds.length; i++) {
-    		app = applications[appIds[i]];
-    		// If the application matches the type given
-    		if (app.application === type) {
-    			appsOfType.push(app);
-    		}
-    	}
-    	// Return array of all matches
-      if (appsOfType.length > 0) {
-        // console.log(appsOfType);
-      }
-    	return appsOfType;
-    },
-
-
-    isParamAppOverThisApp: function(app) {
-    	let thisAppBounds = {
-    		top: this.sage2_y,
-    		left: this.sage2_x,
-    		width: this.sage2_width,
-    		height: this.sage2_height
-    	};
-    	let otherAppBounds = {
-    		top: app.sage2_y,
-    		left: app.sage2_x,
-    		width: app.sage2_width,
-    		height: app.sage2_height
-    	};
-    	// Top left is 0,0.
-    	if ((thisAppBounds.top < otherAppBounds.top)
-    		&& (thisAppBounds.left < otherAppBounds.left)
-    		&& (thisAppBounds.width > otherAppBounds.width)
-    		&& (thisAppBounds.height > otherAppBounds.height)
-    		){
-    			return true;
-    	}
-    	return false;
-    },
-
-
-
-
-    getUrlOfApp: function(app) {
-    	// The different app types have different storage of url
-    	if (app.application === "image_viewer") {
-    		return app.state.img_url;
-    	} else if (app.application === "movie_player") {
-    		return app.state.video_url;
-    	} else {
-    		throw "App type " + app.application + " unsuported. Unable to determine URL.";
+  findAllApplicationsOfType: function(type) {
+  	let appsOfType = [];
+    let appIds = Object.keys(applications);
+    let app;
+    for (let i = 0; i < appIds.length; i++) {
+    	app = applications[appIds[i]];
+    	if (app.application === type) {
+    		appsOfType.push(app);
     	}
     }
+    if (appsOfType.length > 0) {
+    }
+  	return appsOfType;
+  },
+
+
+  isParamAppOverThisApp: function(app) {
+  	let thisAppBounds = {
+  		top: this.sage2_y,
+  		left: this.sage2_x,
+  		width: this.sage2_width,
+  		height: this.sage2_height
+  	};
+  	let otherAppBounds = {
+  		top: app.sage2_y,
+  		left: app.sage2_x,
+  		width: app.sage2_width,
+  		height: app.sage2_height
+  	};
+  	// Top left is 0,0.
+  	if ((thisAppBounds.top < otherAppBounds.top)
+  		&& (thisAppBounds.left < otherAppBounds.left)
+  		&& (thisAppBounds.width > otherAppBounds.width)
+  		&& (thisAppBounds.height > otherAppBounds.height)
+  		){
+  			return true;
+  	}
+  	return false;
+  },
+
+
+  getUrlOfApp: function(app) {
+  	// The different app types have different storage of url
+  	if (app.application === "image_viewer") {
+  		return app.state.img_url;
+  	} else if (app.application === "movie_player") {
+  		return app.state.video_url;
+  	} else {
+  		throw "App type " + app.application + " unsuported. Unable to determine URL.";
+  	}
+  }
 });
