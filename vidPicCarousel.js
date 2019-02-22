@@ -17,6 +17,7 @@
 let videoDiv;
 let imgDiv;
 let actualVideo;
+let switchMedia;
 
 var vidPicCarousel = SAGE2_App.extend({
 	construct: function() {
@@ -273,11 +274,7 @@ var vidPicCarousel = SAGE2_App.extend({
 	// if all the random numbers are in sync this will work - but not completely safe
 
 	newImage: function() {
-
-		console.log("bigList length: " + this.bigList.length);
-		console.log("BIGLIST INCOMING\n");
-		console.log(this.bigList[0]);
-
+		switchMedia = true;
 		if (this.bigList === null) {
 			this.state.counter = 0;
 		} else {
@@ -289,26 +286,32 @@ var vidPicCarousel = SAGE2_App.extend({
 
 				// Switch to new video
 				// this.actualVideo.src = this.bigList[number];
-				console.log("NAME: " + this.bigList[number].name);
-				console.log("NUMBER: " + this.bigList[number]);
 				this.videoDiv.setAttribute("src", "/user/" + this.bigList[number].name);
-				console.log("VIDEO SRC: " + this.videoDiv.src);
 				// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 				this.videoDiv.autoplay = true;
+				switchMedia = false;
 
-				this.videoDiv.video.onplaying = function() {
-					console.log("VIDEO IS PLAYING!");
+				// this.videoDiv.video.onplaying = function() {
+				// 	console.log("VIDEO IS PLAYING!");
+			  // }
+				//
+				// this.videoDiv.video.addEventListener('ended', function(){
+				// 		console.log("VIDEO IS FINISHED!");
+				// 		switchMedia = true;
+				// }, false);
 
-					this.videoDiv.video.addEventListener('ended', function(){
-							console.log("VIDEO IS FINISHED!");
-					}, false);
 
-			  }
+				console.log('before');
+				this.videoDiv.style.zIndex = "100";
+				this.imgDiv.style.display = "none";
+				setTimeout(function(){
+				    console.log('after');
+				},1000*this.videoDiv.duration);
 
 
 				// this.videoDiv.src = this.bigList[number];
 			}
-			else {
+			else if (switchMedia){
 				// Is an image
 				this.imgDiv.style.display = "block";
 				this.videoDiv.style.display = "none";
@@ -408,7 +411,6 @@ var vidPicCarousel = SAGE2_App.extend({
 		// console.log(this.image1);
 		// console.log(this.image2);
 		// console.log(this.image3);
-		console.log("updated");
 	},
 
 	////////////////////////////////////////
@@ -635,7 +637,6 @@ var vidPicCarousel = SAGE2_App.extend({
 	  let imageUrl;
 	  for (let i = 0; i < imageApps.length; i++) {
 	      if (this.isParamAppOverThisApp(imageApps[i])) {
-          console.log("IMAGE: " + imageApps);
 	          imageUrl = this.getUrlOfApp(imageApps[i]);
 	          while(imageUrl.includes("/")) {
 	              imageUrl = imageUrl.substring(imageUrl.indexOf("/") + 1);
@@ -654,7 +655,6 @@ var vidPicCarousel = SAGE2_App.extend({
 		let videoUrl;
 		for (let j = 0; j < videoApps.length; j++) {
 			if (this.isParamAppOverThisApp(videoApps[j])) {
-        console.log("VIDEO: " + videoApps);
         // error; loops forever and doesn't recognize movie_player as an
         // app type
 					videoUrl = this.getUrlOfApp(videoApps[j]);
@@ -669,9 +669,7 @@ var vidPicCarousel = SAGE2_App.extend({
 						this.bigList.push({name: ("videos/" + videoUrl) });
 					}
 
-					console.log("video before close");
 					videoApps[j].close();
-					console.log("video after close");
 
 			}
 		}
