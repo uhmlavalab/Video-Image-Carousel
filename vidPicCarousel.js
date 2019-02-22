@@ -17,7 +17,7 @@
 let videoDiv;
 let imgDiv;
 let actualVideo;
-let switchMedia;
+let switchMedia = true;
 
 var vidPicCarousel = SAGE2_App.extend({
 	construct: function() {
@@ -108,8 +108,11 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.image1 = this.image3; // image1 is now the new image
 		this.image3 = this.imageTemp;
 
-		this.imgDiv.src = this.image1.src;
+		if (switchMedia) {
+			console.log("Switching image");
+			this.imgDiv.src = this.image1.src;
 		// console.log(this.appName + "imageLoadCallback");
+		}
 	},
 
 	imageLoadFailedCallback: function() {
@@ -246,7 +249,8 @@ var vidPicCarousel = SAGE2_App.extend({
 		if (isMaster) {
 			this.updateCounter += 1;
 
-			if (this.updateCounter > (this.loadTimer * this.maxFPS)) {
+			if ( (this.updateCounter > (this.loadTimer * this.maxFPS)) && switchMedia) {
+
 				this.update();
 			}
 
@@ -280,6 +284,7 @@ var vidPicCarousel = SAGE2_App.extend({
 		} else {
 			let number = Math.floor(Math.random() * this.bigList.length);
 			if (typeof this.bigList[number] != "undefined" && this.bigList[number].name.includes(".mp4")) {
+				switchMedia = false;
 				console.log("Video switch");
 				this.imgDiv.style.display = "none";
 				this.videoDiv.style.display = "block";
@@ -289,29 +294,28 @@ var vidPicCarousel = SAGE2_App.extend({
 				this.videoDiv.setAttribute("src", "/user/" + this.bigList[number].name);
 				// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 				this.videoDiv.autoplay = true;
-				switchMedia = false;
 
-				// this.videoDiv.video.onplaying = function() {
-				// 	console.log("VIDEO IS PLAYING!");
-			  // }
-				//
-				// this.videoDiv.video.addEventListener('ended', function(){
-				// 		console.log("VIDEO IS FINISHED!");
-				// 		switchMedia = true;
-				// }, false);
+				this.videoDiv.onplaying = function() {
+					console.log("VIDEO IS PLAYING!");
+			  }
+
+				this.videoDiv.addEventListener('ended', function(){
+						console.log("VIDEO IS FINISHED!");
+						switchMedia = true;
+				}, false);
 
 
-				console.log('before');
-				this.videoDiv.style.zIndex = "100";
-				this.imgDiv.style.display = "none";
-				setTimeout(function(){
-				    console.log('after');
-				},1000*this.videoDiv.duration);
+				// console.log('before');
+				// this.videoDiv.style.zIndex = "100";
+				// this.imgDiv.style.display = "none";
+				// setTimeout(function(){
+				//     console.log('after');
+				// },1000*this.videoDiv.duration);
 
 
 				// this.videoDiv.src = this.bigList[number];
 			}
-			else if (switchMedia){
+			else {
 				// Is an image
 				this.imgDiv.style.display = "block";
 				this.videoDiv.style.display = "none";
@@ -362,9 +366,9 @@ var vidPicCarousel = SAGE2_App.extend({
 
 			// randomly pick a new image to show from the current photo album
 			// which can be showing the same image if the album represents a webcam
-
-			this.newImage();
-
+			if (switchMedia) {
+				this.newImage();
+			}
 			// if there is no image name for that nth image then get out
 			if (this.bigList[this.state.counter] === null) {
 				console.log(this.appName + "cant find filename of image number " + this.state.counter);
