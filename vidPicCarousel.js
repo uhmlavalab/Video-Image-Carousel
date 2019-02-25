@@ -58,12 +58,12 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.image3 = new Image();
 		this.imageTemp = null;
 
+		this.state.imageSet = null;
 		this.updateCounter = 0;
 
 		this.listFileNamePhotos = "";
 		this.listFileNameLibrary = "";
 
-		this.state.imageSet = null;
 		this.state.counter = 1;
 
 	},
@@ -106,6 +106,14 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.okToDraw = this.fadeCount;
 		this.image1 = this.image3; // image1 is now the new image
 		this.image3 = this.imageTemp;
+
+		// Centers image
+		let widthMargin = (800 - this.imgDiv.width) / 2;
+		console.log("WIDTH: " + this.imgDiv.width);
+		console.log("HEIGHT: " + this.imgDiv.height);
+		this.imgDiv.style.marginLeft = widthMargin + "px";
+		this.imgDiv.style.marginRight = widthMargin + "px";
+		console.log("ABC");
 
 		// Prevents switching until video is done playing if current element being
 		// displayed is a video
@@ -461,10 +469,9 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.imgDiv.style.maxWidth = "800px";
 		this.imgDiv.style.maxHeight = "600px";
 		this.imgDiv.style.margin = "0 auto";
-		this.imgDiv.style.textAlign = "center";
 
 		this.element.parentNode.insertBefore(this.imgDiv, this.element);
-		this.element.style.background = "black";
+		this.imgDiv.style.background = "black";
 
 		this.videoDiv = document.createElement("VIDEO");
 
@@ -484,7 +491,18 @@ var vidPicCarousel = SAGE2_App.extend({
 
 
 		this.element.style.display = "none";
+
+
+		let widthMargin = (800 - this.imgDiv.width) / 2;
+		console.log("WIDTH: " + this.imgDiv.width);
+		console.log("HEIGHT: " + this.imgDiv.height);
+		this.imgDiv.style.marginLeft = widthMargin + "px";
+		this.imgDiv.style.marginRight = widthMargin + "px";
+		console.log("ABC");
+
+
 	},
+
 
 	load: function(date) {
 	},
