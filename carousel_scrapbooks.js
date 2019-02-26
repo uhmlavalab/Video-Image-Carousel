@@ -27,7 +27,7 @@
     SAGE2_photoAlbums = [];
     SAGE2_photoAlbums[0] = {
       list: "https://localhost:9090/user/images/slideshow.txt",
-      // @ Where images and videos are at the same level
+      // Where images and videos are at the same level
       location: "https://localhost:9090/user/", // add images/ for images and /videos for videos to the beg of the file
       name: "meow"
     };
