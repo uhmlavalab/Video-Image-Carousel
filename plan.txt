@@ -1,5 +1,6 @@
 todo
 * Find a way to remove slideshow.txt
+  * is it possible for sage to just generate this?
 * center image
 * make background black
 
