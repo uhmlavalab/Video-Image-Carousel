@@ -51,7 +51,6 @@ var vidPicCarousel = SAGE2_App.extend({
 		// Tags to hold the media
 		this.imgDiv = document.createElement("IMG");
 		this.imgDiv.style.display = "block";
-    this.imgDiv.setAttribute("src", "https://localhost:9090/uploads/images/sage2-1400-green_tm.png");
 		this.imgDiv.style.margin = "0 auto";
 		// Just add to this app's primary element
 		this.element.appendChild(this.imgDiv);
@@ -60,7 +59,6 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.videoDiv = document.createElement("VIDEO");
 		this.videoDiv.style.display = "none"; // "block" to show
 		this.videoDiv.setAttribute("type", "video/mp4");
-		this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 		this.videoDiv.style.margin = "0 auto";
 		this.videoDiv.autoplay = true;
 		this.element.appendChild(this.videoDiv);
@@ -80,6 +78,10 @@ var vidPicCarousel = SAGE2_App.extend({
 			console.log("VIDEO IS FINISHED!");
 			this.switchMedia = true;
 		}, false);
+
+		// Defaults
+    this.imgDiv.setAttribute("src", this.resrcPath + "carousel.gif");
+		this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
 	},
 
 
@@ -144,7 +146,9 @@ var vidPicCarousel = SAGE2_App.extend({
 				this.cycleToNextMedia();
 			}
 			// Collect images / videos over carousel
-			this.performEat();
+			if (this.isEating) {
+				this.performEat();
+			}
 		}
 	},
 
@@ -376,10 +380,8 @@ var vidPicCarousel = SAGE2_App.extend({
 	// ------------------------------------------------------------------------------------------------------------------------
 
 	resize: function(date) {
-		this.imgDiv.style.maxWidth = "800px";
-		this.imgDiv.style.maxHeight = "600px";
-		this.videoDiv.style.maxWidth = "800px";
-		this.videoDiv.style.maxHeight = "600px";
+		this.imageLoadCallback();
+		this.videoLoadCallback();
 	},
 
 
