@@ -1,6 +1,6 @@
 {
 	"main_script": "vidPicCarousel.js",
-	"icon": "carousel.gif",
+	"icon": "carousel.png",
 	"width": 800,
 	"height": 600,
 	"animation": true,
@@ -8,7 +8,8 @@
 	],
 	"load": {
 		"imageSet": 0,
-		"counter": 1
+		"counter": 1,
+		"storedList": []
 	},
 	"title": "Video Image Carousel",
 	"version": "1.0.0",

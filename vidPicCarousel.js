@@ -46,6 +46,9 @@ var vidPicCarousel = SAGE2_App.extend({
 
 		// For eating
 		this.isEating = true; // default is true, can be disabled later
+		
+		// For showing help view
+		this.isShowingHelp = false;
 
 
 		// Tags to hold the media
@@ -81,9 +84,13 @@ var vidPicCarousel = SAGE2_App.extend({
 
 		// Defaults
 		// todo Replace with instructions on how to use
-    this.imgDiv.setAttribute("src", this.resrcPath + "carousel.gif");
+		this.imgDiv.setAttribute("src", this.resrcPath + "imageHelp.png");
 		// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
-		this.videoDiv.style.muted = "muted";
+		// this.videoDiv.style.muted = "muted";
+		
+		if (this.state.storedList && (this.state.storedList.length > 0)) {
+		    this.bigList = this.state.storedList;   
+		}
 	},
 
 
@@ -188,7 +195,7 @@ var vidPicCarousel = SAGE2_App.extend({
 			// Switch to new video
 			this.videoDiv.setAttribute("src", this.bigList[this.state.counter].name);
 			// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
-			this.videoDiv.muted = true;
+// 			this.videoDiv.muted = true;
 			this.videoDiv.play();
 		} else {
 			// Is an image
@@ -207,21 +214,24 @@ var vidPicCarousel = SAGE2_App.extend({
 				imageUrl = this.getUrlOfApp(imageApps[i]);
 				if (!this.isAlreadyInBigList(imageUrl)) {
 					this.bigList.push({name: imageUrl});
+					this.state.storedList.push({name: imageUrl});
 				}
 				imageApps[i].close();
 			}
 	  }
-		let videoApps = this.findAllApplicationsOfType("movie_player")
-		let videoUrl;
-		for (let j = 0; j < videoApps.length; j++) {
-			if (this.isParamAppOverThisApp(videoApps[j])) {
-				videoUrl = this.getUrlOfApp(videoApps[j]);
-				if (!this.isAlreadyInBigList(videoUrl)) {
-					this.bigList.push({name: videoUrl});
-				}
-				videoApps[j].close();
-			}
-		}
+        let videoApps = this.findAllApplicationsOfType("movie_player")
+        let videoUrl;
+        for (let j = 0; j < videoApps.length; j++) {
+        	if (this.isParamAppOverThisApp(videoApps[j])) {
+        		videoUrl = this.getUrlOfApp(videoApps[j]);
+        		if (!this.isAlreadyInBigList(videoUrl)) {
+        			this.bigList.push({name: videoUrl});
+        			this.state.storedList.push({name: videoUrl});
+        		}
+        		videoApps[j].close();
+        	}
+        }
+        this.SAGE2Sync(true);
 	},
 
 
@@ -306,6 +316,24 @@ var vidPicCarousel = SAGE2_App.extend({
 	*/
 	getContextEntries: function() {
 		var entries = [];
+		
+
+//         if (this.isShowingHelp) {
+//     		entries.push({
+//     			description: "Hide Help",
+//     			callback: "toggleHelpView",
+//     			parameters: {},
+//     		});
+//         } else {
+//     		entries.push({
+//     			description: "Show Help",
+//     			callback: "toggleHelpView",
+//     			parameters: {},
+//     		});
+//         }
+		
+// 		entries.push({ description: "separator" });
+
 
 		if (this.isEating) {
 			entries.push({
@@ -353,6 +381,14 @@ var vidPicCarousel = SAGE2_App.extend({
 		});
 
 		return entries;
+	},
+	
+	toggleHelpView: function() {
+	  this.isShowingHelp = !this.isShowingHelp;
+	  
+	  console.log("NEED TO IMPLEMENT showing / hiding help view");
+	  
+	  this.getFullContextMenuAndUpdate();
 	},
 
 
