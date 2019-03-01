@@ -28,7 +28,7 @@ var vidPicCarousel = SAGE2_App.extend({
 
 		// Make the background black;
 		this.element.style.background = "black";
-		
+
 		// The above are SAGE2 values available to nearly all apps
 		this.appSpecificInit();
 	},
@@ -80,8 +80,10 @@ var vidPicCarousel = SAGE2_App.extend({
 		}, false);
 
 		// Defaults
+		// todo Replace with instructions on how to use
     this.imgDiv.setAttribute("src", this.resrcPath + "carousel.gif");
-		this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
+		// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
+		this.videoDiv.style.muted = "muted";
 	},
 
 
@@ -119,8 +121,6 @@ var vidPicCarousel = SAGE2_App.extend({
 		}
 		// // Centers image, use sage2_width to get current app width
 		// let widthMargin = (this.sage2_width - this.imgDiv.width) / 2;
-		console.log("WIDTH: " + this.imgDiv.width);
-		console.log("HEIGHT: " + this.imgDiv.height);
 		// this.imgDiv.style.marginLeft = widthMargin + "px";
 		// this.imgDiv.style.marginRight = widthMargin + "px";
 	},
@@ -183,19 +183,18 @@ var vidPicCarousel = SAGE2_App.extend({
 		if (typeof this.bigList[this.state.counter] != "undefined" && this.bigList[this.state.counter].name.includes(".mp4")) {
 			// Disable media switching if on video, to allow it to run
 			this.switchMedia = false;
-			console.log("Video switch");
 			this.imgDiv.style.display = "none";
 			this.videoDiv.style.display = "block";
 			// Switch to new video
 			this.videoDiv.setAttribute("src", this.bigList[this.state.counter].name);
 			// this.videoDiv.setAttribute("src", "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4");
+			this.videoDiv.muted = true;
 			this.videoDiv.play();
 		} else {
 			// Is an image
 			this.imgDiv.style.display = "block";
 			this.videoDiv.style.display = "none";
 			this.imgDiv.src = this.bigList[this.state.counter].name;
-			console.log("image");
 		}
 	},
 
@@ -370,10 +369,10 @@ var vidPicCarousel = SAGE2_App.extend({
 		this.getFullContextMenuAndUpdate();
 	},
 
-
 	setCycleTimer: function(responseObject) {
 		this.loadTimer = parseFloat(responseObject.clientInput);
 	},
+
 
 
 	// ------------------------------------------------------------------------------------------------------------------------
