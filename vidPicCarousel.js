@@ -15,6 +15,7 @@
 // A video/photo slideshow
 // Written by Andy Johnson - 2014
 // and Angela Zheng - 2019
+// and Dylan Kobayashi - 2019
 ////////////////////////////////////////
 
 
@@ -179,7 +180,15 @@ var vidPicCarousel = SAGE2_App.extend({
 			} else {
 				this.state.counter = parseInt(Math.random() * this.bigList.length);
 			}
-			this.newImage();
+			try{
+				this.newImage();
+			} catch (e) {
+				// If error wait one frame before trying to cycle to next media.
+				// Avoid recursion in case of potentially bad list or random unlucky draws
+				setTimeout(() => {
+					this.cycleToNextMedia();
+				}, 0);
+			}
 		}
 	},
 
@@ -219,19 +228,19 @@ var vidPicCarousel = SAGE2_App.extend({
 				imageApps[i].close();
 			}
 	  }
-        let videoApps = this.findAllApplicationsOfType("movie_player")
-        let videoUrl;
-        for (let j = 0; j < videoApps.length; j++) {
-        	if (this.isParamAppOverThisApp(videoApps[j])) {
-        		videoUrl = this.getUrlOfApp(videoApps[j]);
-        		if (!this.isAlreadyInBigList(videoUrl)) {
-        			this.bigList.push({name: videoUrl});
-        			this.state.storedList.push({name: videoUrl});
-        		}
-        		videoApps[j].close();
-        	}
-        }
-        this.SAGE2Sync(true);
+		let videoApps = this.findAllApplicationsOfType("movie_player")
+		let videoUrl;
+		for (let j = 0; j < videoApps.length; j++) {
+			if (this.isParamAppOverThisApp(videoApps[j])) {
+				videoUrl = this.getUrlOfApp(videoApps[j]);
+				if (!this.isAlreadyInBigList(videoUrl)) {
+					this.bigList.push({name: videoUrl});
+					this.state.storedList.push({name: videoUrl});
+				}
+				videoApps[j].close();
+			}
+		}
+		this.SAGE2Sync(true);
 	},
 
 
@@ -380,6 +389,16 @@ var vidPicCarousel = SAGE2_App.extend({
 			parameters: {},
 		});
 
+		entries.push({ description: "separator" });
+
+		entries.push({
+			description: "Add image from URL",
+			callback: "addImageFromUrl",
+			parameters: {},
+			inputField: true,
+			inputFieldSize: 10,
+		});
+
 		return entries;
 	},
 	
@@ -407,6 +426,11 @@ var vidPicCarousel = SAGE2_App.extend({
 
 	setCycleTimer: function(responseObject) {
 		this.loadTimer = parseFloat(responseObject.clientInput);
+	},
+
+	addImageFromUrl: function(responseObject) {
+		this.bigList.push({name: responseObject.clientInput});
+		this.state.storedList.push({name: responseObject.clientInput});
 	},
 
 
